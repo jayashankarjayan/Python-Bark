@@ -7,9 +7,9 @@ from logging import Logger, LogRecord
 import requests
 
 from .exceptions import BarkHandlerNotFound, NoHandlersFound, BarkLogInsertionFailed
+from .configs import config
 from .handler import BarkHandler, handler_object
 from .domain.log_object import LogObject
-
 
 def validate_handler(logger_object: Logger):
     if not handler_object.handler:
@@ -66,7 +66,8 @@ def make_bulk_bark_request(logger_object: Logger):
         request_body.append(collect_logs(record, log_format))
 
     try:
-        url = "http://127.0.0.1:8081/insertMultiple"
+        url = f"{config.bark_url}/insertMultiple"
+        print(url)
         response: requests.Response = requests.post(url, json=request_body)
         assert (
             response.status_code == requests.codes.ok
