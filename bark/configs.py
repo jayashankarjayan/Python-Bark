@@ -1,8 +1,8 @@
-from pydantic import BaseModel, computed_field, field_validator
+from pydantic import BaseModel, computed_field, field_validator, HttpUrl, IPvAnyAddress
 
 
-class BarkConfig(BaseModel):
-    url: str = "http://127.0.0.1"
+class BarkConfig(BaseModel, validate_assignment=True):
+    url: HttpUrl | IPvAnyAddress = "http://127.0.0.1"
     port: int = 8081
 
     @field_validator("url")
@@ -11,7 +11,7 @@ class BarkConfig(BaseModel):
             raise TypeError("Invalid url provided")
         return value.strip()
 
-    @computed_field
+    @computed_field(repr=False)
     @property
     def bark_url(self) -> str:
         if not self.url.startswith("http"):

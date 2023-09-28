@@ -68,7 +68,6 @@ def make_bulk_bark_request(logger_object: Logger):
 
     try:
         url = f"{config.bark_url}/insertMultiple"
-        print(url)
         response: requests.Response = requests.post(url, json=request_body)
         assert (
             response.status_code == requests.codes.ok

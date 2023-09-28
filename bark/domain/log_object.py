@@ -1,43 +1,21 @@
 from typing import Dict, Any
-from pydantic import BaseModel, field_validator
-
-
-d = {
-    "id": -100,
-    "logLevel": "info",
-    "serviceName": "TestPostman",
-    "code": "1KE0H8",
-    "msg": "Shows up in DB or not?",
-    "moreData": {"name": "vaibhav"},
-}
+from pydantic import BaseModel, field_validator, Field
 
 
 class LogObject(BaseModel):
     id: int | None = None
-    log_level: str
-    service_name: str
+    log_level: str = Field(serialization_alias="logLevel")
+    service_name: str = Field(serialization_alias="serviceName")
     code: str | int
     msg: str
-    more_data: Dict[str, Any] = {}
+    more_data: Dict[str, Any]  = Field(serialization_alias="moreData", default_factory=dict)
 
     @property
     def payload(self):
-        _data = {
-            "id": -100,
-            "logLevel": "info",
-            "serviceName": "TestPostman",
-            "code": "1KE0H8",
-            "msg": "Shows up in DB or not?",
-            "moreData": {"name": "vaibhav"},
-        }
-        _payload = self.model_dump()
+        _payload = self.model_dump(by_alias=True)
 
         if not self.id:
             _payload.pop("id")
-
-        _payload["serviceName"] = _payload.pop("service_name")
-        _payload["logLevel"] = _payload.pop("log_level")
-        _payload["moreData"] = _payload.pop("more_data")
 
         return _payload
 
