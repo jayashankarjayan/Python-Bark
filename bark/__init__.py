@@ -11,6 +11,7 @@ from .configs import config
 from .handler import BarkHandler, handler_object
 from .domain.log_object import LogObject
 
+
 def validate_handler(logger_object: Logger):
     if not handler_object.handler:
         if not logger_object.hasHandlers():
@@ -101,7 +102,7 @@ class Bark(Logger):
         exc_info=None,
         stack_info: bool = False,
         stacklevel: int = 1,
-        extra: Mapping[str, object] | None = None
+        extra: Mapping[str, object] | None = None,
     ) -> None:
         print("Hmm")
         return super().info(
@@ -110,7 +111,7 @@ class Bark(Logger):
             exc_info=exc_info,
             stack_info=stack_info,
             stacklevel=stacklevel,
-            extra=extra
+            extra=extra,
         )
 
     def debug(
@@ -120,7 +121,7 @@ class Bark(Logger):
         exc_info=None,
         stack_info: bool = False,
         stacklevel: int = 1,
-        extra: Mapping[str, object] | None = None
+        extra: Mapping[str, object] | None = None,
     ) -> None:
         return super().debug(
             msg,
@@ -128,7 +129,7 @@ class Bark(Logger):
             exc_info=exc_info,
             stack_info=stack_info,
             stacklevel=stacklevel,
-            extra=extra
+            extra=extra,
         )
 
     def warn(
@@ -138,7 +139,7 @@ class Bark(Logger):
         exc_info=None,
         stack_info: bool = False,
         stacklevel: int = 1,
-        extra: Mapping[str, object] | None = None
+        extra: Mapping[str, object] | None = None,
     ) -> None:
         return super().warn(
             msg,
@@ -146,7 +147,7 @@ class Bark(Logger):
             exc_info=exc_info,
             stack_info=stack_info,
             stacklevel=stacklevel,
-            extra=extra
+            extra=extra,
         )
 
     def warning(
@@ -156,7 +157,7 @@ class Bark(Logger):
         exc_info=None,
         stack_info: bool = False,
         stacklevel: int = 1,
-        extra: Mapping[str, object] | None = None
+        extra: Mapping[str, object] | None = None,
     ) -> None:
         return super().warning(
             msg,
@@ -164,7 +165,7 @@ class Bark(Logger):
             exc_info=exc_info,
             stack_info=stack_info,
             stacklevel=stacklevel,
-            extra=extra
+            extra=extra,
         )
 
     def error(
@@ -174,7 +175,7 @@ class Bark(Logger):
         exc_info=None,
         stack_info: bool = False,
         stacklevel: int = 1,
-        extra: Mapping[str, object] | None = None
+        extra: Mapping[str, object] | None = None,
     ) -> None:
         return super().error(
             msg,
@@ -182,5 +183,5 @@ class Bark(Logger):
             exc_info=exc_info,
             stack_info=stack_info,
             stacklevel=stacklevel,
-            extra=extra
+            extra=extra,
         )

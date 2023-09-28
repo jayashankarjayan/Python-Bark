@@ -21,4 +21,5 @@ class BarkConfig(BaseModel):
             return url[:-1]
         return url
 
+
 config = BarkConfig()
