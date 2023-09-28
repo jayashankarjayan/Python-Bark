@@ -8,7 +8,9 @@ class LogObject(BaseModel):
     service_name: str = Field(serialization_alias="serviceName")
     code: str | int
     msg: str
-    more_data: Dict[str, Any]  = Field(serialization_alias="moreData", default_factory=dict)
+    more_data: Dict[str, Any] = Field(
+        serialization_alias="moreData", default_factory=dict
+    )
 
     @property
     def payload(self):
