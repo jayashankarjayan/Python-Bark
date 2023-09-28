@@ -11,9 +11,10 @@ logger.addHandler(stream_handler)
 bark_handler = BarkHandler()
 logger.addHandler(bark_handler)
 
-formatter = logging.Formatter('%(asctime)s %(Metadata)s : %(message)s')
+formatter = logging.Formatter("%(asctime)s %(Metadata)s : %(message)s")
 bark_handler.setFormatter(formatter)
 stream_handler.setFormatter(formatter)
+
 
 @bark(logger)
 def my_func(a: int, b: int):

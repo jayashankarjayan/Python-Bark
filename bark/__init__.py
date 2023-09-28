@@ -20,26 +20,32 @@ def validate_handler(logger_object: Logger):
             if isinstance(handler, BarkHandler):
                 handler_object.handler = handler
                 break
-        
+
         if not handler_object.handler:
             raise BarkHandlerNotFound("Handler of type BarkHandler not found")
 
+
 def collect_logs(record: LogRecord, log_format: str | None = None):
     more_data = get_more_data(record.__dict__, log_format)
-    log_object = LogObject(log_level=record.levelname, service_name=record.name,
-                           code=record.levelno, msg=record.msg)
+    log_object = LogObject(
+        log_level=record.levelname,
+        service_name=record.name,
+        code=record.levelno,
+        msg=record.msg,
+    )
     if more_data:
         log_object.more_data = more_data
 
     return log_object.payload
 
-def get_more_data(record_data: Dict[str, Any], log_format: str | None) -> Dict[str, Any]:
+
+def get_more_data(
+    record_data: Dict[str, Any], log_format: str | None
+) -> Dict[str, Any]:
     more_data: Dict[str, Any] = {}
-    match_to_exclude = [
-        "message", "asctime"
-    ]
+    match_to_exclude = ["message", "asctime"]
     if log_format:
-        pattern = r'%\(([^)]+)\)'
+        pattern = r"%\(([^)]+)\)"
         matches: list[str] = re.findall(pattern, log_format)
 
         for match in matches:
@@ -47,6 +53,7 @@ def get_more_data(record_data: Dict[str, Any], log_format: str | None) -> Dict[s
                 more_data[match] = record_data.get(match)
 
     return more_data
+
 
 def make_bulk_bark_request(logger_object: Logger):
     try:
@@ -58,42 +65,121 @@ def make_bulk_bark_request(logger_object: Logger):
     for record in handler_object.handler.records:
         request_body.append(collect_logs(record, log_format))
 
-
     try:
         url = "http://127.0.0.1:8081/insertMultiple"
         response: requests.Response = requests.post(url, json=request_body)
-        assert response.status_code == requests.codes.ok, "Failed to add logs to bark database"
+        assert (
+            response.status_code == requests.codes.ok
+        ), "Failed to add logs to bark database"
     except AssertionError:
         raise BarkLogInsertionFailed(response.content)
 
+
 def bark(logger_object: Logger):
     validate_handler(logger_object)
+
     def inner(func: Any) -> FunctionType:
         def actual_function_execution(*args: tuple[Any], **kwargs: Dict[str, Any]):
             func_return_value = func(*args, **kwargs)
             make_bulk_bark_request(logger_object)
             return func_return_value
+
         return actual_function_execution
+
     return inner
 
-class Bark(Logger):
 
+class Bark(Logger):
     def __init__(self, name: str, level: int = 0) -> None:
         super().__init__(name, level)
 
-    def info(self, msg: object, *args: object, exc_info = None, stack_info: bool = False, stacklevel: int = 1, extra: Mapping[str, object] | None = None) -> None:
+    def info(
+        self,
+        msg: object,
+        *args: object,
+        exc_info=None,
+        stack_info: bool = False,
+        stacklevel: int = 1,
+        extra: Mapping[str, object] | None = None
+    ) -> None:
         print("Hmm")
-        return super().info(msg, *args, exc_info=exc_info, stack_info=stack_info, stacklevel=stacklevel, extra=extra)
+        return super().info(
+            msg,
+            *args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            stacklevel=stacklevel,
+            extra=extra
+        )
 
-    def debug(self, msg: object, *args: object, exc_info = None, stack_info: bool = False, stacklevel: int = 1, extra: Mapping[str, object] | None = None) -> None:
-        return super().debug(msg, *args, exc_info=exc_info, stack_info=stack_info, stacklevel=stacklevel, extra=extra)
+    def debug(
+        self,
+        msg: object,
+        *args: object,
+        exc_info=None,
+        stack_info: bool = False,
+        stacklevel: int = 1,
+        extra: Mapping[str, object] | None = None
+    ) -> None:
+        return super().debug(
+            msg,
+            *args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            stacklevel=stacklevel,
+            extra=extra
+        )
 
-    def warn(self, msg: object, *args: object, exc_info = None, stack_info: bool = False, stacklevel: int = 1, extra: Mapping[str, object] | None = None) -> None:
-        return super().warn(msg, *args, exc_info=exc_info, stack_info=stack_info, stacklevel=stacklevel, extra=extra)
+    def warn(
+        self,
+        msg: object,
+        *args: object,
+        exc_info=None,
+        stack_info: bool = False,
+        stacklevel: int = 1,
+        extra: Mapping[str, object] | None = None
+    ) -> None:
+        return super().warn(
+            msg,
+            *args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            stacklevel=stacklevel,
+            extra=extra
+        )
 
-    def warning(self, msg: object, *args: object, exc_info = None, stack_info: bool = False, stacklevel: int = 1, extra: Mapping[str, object] | None = None) -> None:
-        return super().warning(msg, *args, exc_info=exc_info, stack_info=stack_info, stacklevel=stacklevel, extra=extra)
+    def warning(
+        self,
+        msg: object,
+        *args: object,
+        exc_info=None,
+        stack_info: bool = False,
+        stacklevel: int = 1,
+        extra: Mapping[str, object] | None = None
+    ) -> None:
+        return super().warning(
+            msg,
+            *args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            stacklevel=stacklevel,
+            extra=extra
+        )
 
-    def error(self, msg: object, *args: object, exc_info = None, stack_info: bool = False, stacklevel: int = 1, extra: Mapping[str, object] | None = None) -> None:
-        return super().error(msg, *args, exc_info=exc_info, stack_info=stack_info, stacklevel=stacklevel, extra=extra)
-    
+    def error(
+        self,
+        msg: object,
+        *args: object,
+        exc_info=None,
+        stack_info: bool = False,
+        stacklevel: int = 1,
+        extra: Mapping[str, object] | None = None
+    ) -> None:
+        return super().error(
+            msg,
+            *args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            stacklevel=stacklevel,
+            extra=extra
+        )

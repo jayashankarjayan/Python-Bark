@@ -8,10 +8,9 @@ d = {
     "serviceName": "TestPostman",
     "code": "1KE0H8",
     "msg": "Shows up in DB or not?",
-    "moreData": {
-        "name":"vaibhav"
-    }
+    "moreData": {"name": "vaibhav"},
 }
+
 
 class LogObject(BaseModel):
     id: int | None = None
@@ -24,13 +23,13 @@ class LogObject(BaseModel):
     @property
     def payload(self):
         _data = {
-            "id": -100, "logLevel": "info",
+            "id": -100,
+            "logLevel": "info",
             "serviceName": "TestPostman",
-            "code": "1KE0H8", "msg": "Shows up in DB or not?",
-            "moreData": {
-                "name":"vaibhav"
-                }
-            }
+            "code": "1KE0H8",
+            "msg": "Shows up in DB or not?",
+            "moreData": {"name": "vaibhav"},
+        }
         _payload = self.model_dump()
 
         if not self.id:
