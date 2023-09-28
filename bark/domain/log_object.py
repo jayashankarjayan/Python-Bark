@@ -36,8 +36,13 @@ class LogObject(BaseModel):
         if not self.id:
             _payload.pop("id")
 
-        _payload["service_name"] = _payload.pop("service_name")
+        _payload["serviceName"] = _payload.pop("service_name")
         _payload["logLevel"] = _payload.pop("log_level")
         _payload["moreData"] = _payload.pop("more_data")
 
         return _payload
+
+    @field_validator("code")
+    def convert_code(cls, value: str | int):
+        if isinstance(value, int):
+            return str(value)

@@ -4,35 +4,34 @@ from typing import Any, Dict
 from types import FunctionType
 from logging import Logger, LogRecord
 
-from .handler import BarkHandler
+import requests
+
+from .exceptions import BarkHandlerNotFound, NoHandlersFound, BarkLogInsertionFailed
+from .handler import BarkHandler, handler_object
 from .domain.log_object import LogObject
 
 
-def bark(logger_object: Logger):
-    def inner(func: Any) -> FunctionType:
-        def actual_function_execution(*args: tuple[Any], **kwargs: Dict[str, Any]):
-            func_return_value = func(*args, **kwargs)
-            try:
-                log_format = logger_object.handlers[0].formatter._fmt
-            except AttributeError:
-                log_format = None
+def validate_handler(logger_object: Logger):
+    if not handler_object.handler:
+        if not logger_object.hasHandlers():
+            raise NoHandlersFound("No handlers have been added to logger instance")
 
-            handler: BarkHandler = logger_object.handlers[0]
-
-            for record in handler.records:
-                collect_logs(record, log_format)
-            return func_return_value
-        return actual_function_execution
-    return inner
+        for handler in logger_object.handlers:
+            if isinstance(handler, BarkHandler):
+                handler_object.handler = handler
+                break
+        
+        if not handler_object.handler:
+            raise BarkHandlerNotFound("Handler of type BarkHandler not found")
 
 def collect_logs(record: LogRecord, log_format: str | None = None):
     more_data = get_more_data(record.__dict__, log_format)
     log_object = LogObject(log_level=record.levelname, service_name=record.name,
-                            code=record.levelno, msg=record.msg)
+                           code=record.levelno, msg=record.msg)
     if more_data:
         log_object.more_data = more_data
 
-    print(log_object.payload)
+    return log_object.payload
 
 def get_more_data(record_data: Dict[str, Any], log_format: str | None) -> Dict[str, Any]:
     more_data: Dict[str, Any] = {}
@@ -48,6 +47,34 @@ def get_more_data(record_data: Dict[str, Any], log_format: str | None) -> Dict[s
                 more_data[match] = record_data.get(match)
 
     return more_data
+
+def make_bulk_bark_request(logger_object: Logger):
+    try:
+        log_format = logger_object.handlers[0].formatter._fmt
+    except AttributeError:
+        log_format = None
+
+    request_body = []
+    for record in handler_object.handler.records:
+        request_body.append(collect_logs(record, log_format))
+
+
+    try:
+        url = "http://127.0.0.1:8081/insertMultiple"
+        response: requests.Response = requests.post(url, json=request_body)
+        assert response.status_code == requests.codes.ok, "Failed to add logs to bark database"
+    except AssertionError:
+        raise BarkLogInsertionFailed(response.content)
+
+def bark(logger_object: Logger):
+    validate_handler(logger_object)
+    def inner(func: Any) -> FunctionType:
+        def actual_function_execution(*args: tuple[Any], **kwargs: Dict[str, Any]):
+            func_return_value = func(*args, **kwargs)
+            make_bulk_bark_request(logger_object)
+            return func_return_value
+        return actual_function_execution
+    return inner
 
 class Bark(Logger):
 
