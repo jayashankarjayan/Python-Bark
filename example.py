@@ -19,7 +19,7 @@ stream_handler.setFormatter(formatter)
 def my_func(a: int, b: int):
     logger.info("INFO  Log", extra={"Metadata": "A"})
     logger.warning("DEBUG  Log", extra={"Metadata": "B"})
-    return "s"
+    return "Hello World"
 
 
 if __name__ == "__main__":

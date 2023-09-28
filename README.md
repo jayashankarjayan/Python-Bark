@@ -35,5 +35,5 @@ This ensures that the `Python-Bark` module works along with the existing `logger
 def my_func(a: int, b: int):
     logger.info("INFO  Log", extra={"Metadata": "A"})
     logger.warning("DEBUG  Log", extra={"Metadata": "B"})
-    return "s"
+    return "Hello World"
 ```
