@@ -7,8 +7,10 @@ Python-Bark aims to be a Python SDK, an extension to the [techrail/bark](https:/
 
 To test out the library, perform the following steps: -
 
+- Set up [techrail/bark](https://github.com/techrail/bark) server.
 - Clone the repository
 - Install the dependencies by running `pip install -r requirements.txt`
+- Provide 
 - Run the `example.py` python script.
 
 ---
@@ -36,4 +38,15 @@ def my_func(a: int, b: int):
     logger.info("INFO  Log", extra={"Metadata": "A"})
     logger.warning("DEBUG  Log", extra={"Metadata": "B"})
     return "Hello World"
+```
+
+### Configuration
+In order to change the values for host and port of the [techrail/bark](https://github.com/techrail/bark) server implement the following configurations in your code
+
+
+```
+from bark.configs import config
+config.url = "http://example.com"
+config.port = 8000
+
 ```
