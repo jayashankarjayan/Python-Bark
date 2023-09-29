@@ -11,7 +11,7 @@ To test out the library, perform the following steps: -
 - Clone the repository
 - Install the dependencies by running `pip install -r requirements.txt`
 - Provide 
-- Run the `example.py` python script.
+- Run the `example_bulk_insert.py` python script.
 
 ---
 To use the library in a function in your code, perform the following steps - 
