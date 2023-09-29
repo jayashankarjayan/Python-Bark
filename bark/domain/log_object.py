@@ -8,7 +8,7 @@ class LogObject(BaseModel):
     service_name: str = Field(serialization_alias="serviceName")
     code: str | int
     msg: str
-    more_data: Dict[str, Any] = Field(
+    more_data: Dict[str, Any] | None = Field(
         serialization_alias="moreData", default_factory=dict
     )
 
@@ -25,3 +25,11 @@ class LogObject(BaseModel):
     def convert_code(cls, value: str | int):
         if isinstance(value, int):
             return str(value)
+        return value
+
+    @field_validator("more_data")
+    def validate_more_data(cls, value: Dict[str, Any] | None):
+        if not value:
+            value = {}
+
+        return value

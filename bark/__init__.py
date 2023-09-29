@@ -2,7 +2,7 @@ from collections.abc import Mapping
 import re
 from typing import Any, Dict
 from types import FunctionType
-from logging import Logger, LogRecord
+from logging import Logger, LogRecord, INFO, ERROR, DEBUG, WARN, WARNING
 
 import requests
 
@@ -91,8 +91,21 @@ def bark(logger_object: Logger):
 
 
 class Bark(Logger):
+
     def __init__(self, name: str, level: int = 0) -> None:
         super().__init__(name, level)
+        self.name = name
+
+    @classmethod
+    def insert_single_bark_record(cls, payload: Dict[str, Any]):
+        try:
+            url = f"{config.bark_url}/insertSingle"
+            response: requests.Response = requests.post(url, json=payload)
+            assert (
+                response.status_code == requests.codes.ok
+            ), "Failed to add log to bark database"
+        except AssertionError:
+            raise BarkLogInsertionFailed(response.content)
 
     def info(
         self,
@@ -103,7 +116,14 @@ class Bark(Logger):
         stacklevel: int = 1,
         extra: Mapping[str, object] | None = None,
     ) -> None:
-        print("Hmm")
+        bark_log = LogObject(
+            log_level="INFO",
+            more_data=extra,
+            service_name=self.name, code=INFO,
+            msg=msg
+        )
+        Bark.insert_single_bark_record(bark_log.payload)
+    
         return super().info(
             msg,
             *args,
@@ -122,6 +142,13 @@ class Bark(Logger):
         stacklevel: int = 1,
         extra: Mapping[str, object] | None = None,
     ) -> None:
+        bark_log = LogObject(
+            log_level="DEBUG",
+            more_data=extra,
+            service_name=self.name, code=DEBUG,
+            msg=msg
+        )
+        Bark.insert_single_bark_record(bark_log.payload)
         return super().debug(
             msg,
             *args,
@@ -140,6 +167,13 @@ class Bark(Logger):
         stacklevel: int = 1,
         extra: Mapping[str, object] | None = None,
     ) -> None:
+        bark_log = LogObject(
+            log_level="WARN",
+            more_data=extra,
+            service_name=self.name, code=WARN,
+            msg=msg
+        )
+        Bark.insert_single_bark_record(bark_log.payload)
         return super().warn(
             msg,
             *args,
@@ -158,6 +192,13 @@ class Bark(Logger):
         stacklevel: int = 1,
         extra: Mapping[str, object] | None = None,
     ) -> None:
+        bark_log = LogObject(
+            log_level="WARNING",
+            more_data=extra,
+            service_name=self.name, code=WARNING,
+            msg=msg
+        )
+        Bark.insert_single_bark_record(bark_log.payload)
         return super().warning(
             msg,
             *args,
@@ -176,6 +217,13 @@ class Bark(Logger):
         stacklevel: int = 1,
         extra: Mapping[str, object] | None = None,
     ) -> None:
+        bark_log = LogObject(
+            log_level="ERROR",
+            more_data=extra,
+            service_name=self.name, code=ERROR,
+            msg=msg
+        )
+        Bark.insert_single_bark_record(bark_log.payload)
         return super().error(
             msg,
             *args,
