@@ -32,7 +32,7 @@ def collect_logs(record: LogRecord, log_format: str | None = None):
         log_level=record.levelname,
         service_name=record.name,
         code=record.levelno,
-        msg=record.msg,
+        msg=record.msg % record.args,
     )
     if more_data:
         log_object.more_data = more_data
@@ -221,7 +221,7 @@ class Bark(Logger):
             log_level="ERROR",
             more_data=extra,
             service_name=self.name, code=ERROR,
-            msg=msg
+            msg=msg % args
         )
         Bark.insert_single_bark_record(bark_log.payload)
         return super().error(
