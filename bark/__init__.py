@@ -91,7 +91,6 @@ def bark(logger_object: Logger):
 
 
 class Bark(Logger):
-
     def __init__(self, name: str, level: int = 0) -> None:
         super().__init__(name, level)
         self.name = name
@@ -119,11 +118,12 @@ class Bark(Logger):
         bark_log = LogObject(
             log_level="INFO",
             more_data=extra,
-            service_name=self.name, code=INFO,
-            msg=msg
+            service_name=self.name,
+            code=INFO,
+            msg=msg,
         )
         Bark.insert_single_bark_record(bark_log.payload)
-    
+
         return super().info(
             msg,
             *args,
@@ -145,8 +145,9 @@ class Bark(Logger):
         bark_log = LogObject(
             log_level="DEBUG",
             more_data=extra,
-            service_name=self.name, code=DEBUG,
-            msg=msg
+            service_name=self.name,
+            code=DEBUG,
+            msg=msg,
         )
         Bark.insert_single_bark_record(bark_log.payload)
         return super().debug(
@@ -170,8 +171,9 @@ class Bark(Logger):
         bark_log = LogObject(
             log_level="WARN",
             more_data=extra,
-            service_name=self.name, code=WARN,
-            msg=msg
+            service_name=self.name,
+            code=WARN,
+            msg=msg,
         )
         Bark.insert_single_bark_record(bark_log.payload)
         return super().warn(
@@ -195,8 +197,9 @@ class Bark(Logger):
         bark_log = LogObject(
             log_level="WARNING",
             more_data=extra,
-            service_name=self.name, code=WARNING,
-            msg=msg
+            service_name=self.name,
+            code=WARNING,
+            msg=msg,
         )
         Bark.insert_single_bark_record(bark_log.payload)
         return super().warning(
@@ -220,8 +223,9 @@ class Bark(Logger):
         bark_log = LogObject(
             log_level="ERROR",
             more_data=extra,
-            service_name=self.name, code=ERROR,
-            msg=msg % args
+            service_name=self.name,
+            code=ERROR,
+            msg=msg % args,
         )
         Bark.insert_single_bark_record(bark_log.payload)
         return super().error(
