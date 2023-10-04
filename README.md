@@ -66,5 +66,6 @@ In order to change the values for host and port of the [techrail/bark](https://g
 from bark.configs import config
 config.url = "http://example.com"
 config.port = 8000
-
 ```
+
+By default, the url is `http://127.0.0.1` and port is `8081`
