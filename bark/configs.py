@@ -9,9 +9,16 @@ class BarkConfig(BaseModel, validate_assignment=True):
     @property
     def bark_url(self) -> str:
         url = f"{self.url}:{self.port}"
-        if url.endswith("/"):
-            return url[:-1]
         return url
 
+    @field_validator("url")
+    def url_validator(self, value: HttpUrl | IPvAnyAddress | str):
+        if not isinstance(value, str):
+            value = str(value)
+
+        if value.endswith("/"):
+            return value[:-1]
+
+        return value
 
 config = BarkConfig()
